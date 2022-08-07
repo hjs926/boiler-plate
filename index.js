@@ -1,8 +1,11 @@
 const express = require("express");
 const app = express();
 const port = 5000;
-
+const bodyParser = require("body-parser");
 const { User } = require("./models/user");
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const mongoose = require("mongoose");
 mongoose
@@ -21,7 +24,11 @@ app.get("/", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const user = new User();
+  const user = new User(req.body);
+
+  user.save((err, doc) => {
+    if (err) return res.json({ success: false, err });
+  });
 });
 
 app.listen(port, () => {
